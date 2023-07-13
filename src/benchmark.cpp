@@ -1,6 +1,6 @@
 /*
   Stockfish, a UCI chess playing engine derived from Glaurung 2.1
-  Copyright (C) 2004-2022 The Stockfish developers (see AUTHORS file)
+  Copyright (C) 2004-2023 The Stockfish developers (see AUTHORS file)
 
   Stockfish is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include "benchmark.h"
 
 #include <fstream>
 #include <iostream>
@@ -151,23 +153,14 @@ vector<string> setup_bench(const Position& current, istream& is) {
   list.emplace_back("setoption name Hash value " + ttSize);
   list.emplace_back("ucinewgame");
 
-  size_t posCounter = 0;
-
   for (const string& fen : fens)
       if (fen.find("setoption") != string::npos)
           list.emplace_back(fen);
       else
       {
-          if (evalType == "classical" || (evalType == "mixed" && posCounter % 2 == 0))
-              list.emplace_back("setoption name Use NNUE value false");
-          else if (evalType == "NNUE" || (evalType == "mixed" && posCounter % 2 != 0))
-              list.emplace_back("setoption name Use NNUE value true");
           list.emplace_back("position fen " + fen);
           list.emplace_back(go);
-          ++posCounter;
       }
-
-  list.emplace_back("setoption name Use NNUE value true");
 
   return list;
 }
