@@ -195,6 +195,7 @@ namespace {
          << "\nTotal time (ms) : " << elapsed
          << "\nNodes searched  : " << nodes
          << "\nNodes/second    : " << 1000 * nodes / elapsed << endl;
+    cout << "OVERALL: " << nodes << " nodes   " << 1000 * nodes / elapsed << " nps" << std::endl;
   }
 
   // The win rate model returns the probability of winning (in per mille units) given an
@@ -240,13 +241,19 @@ void UCI::loop(int argc, char* argv[]) {
 
   pos.set(StartFEN, false, &states->back(), Threads.main());
 
-  for (int i = 1; i < argc; ++i)
-      cmd += std::string(argv[i]) + " ";
+  std::deque<std::string> cmds;
+  if (argc > 1) {
+      for (int i = 1; i < argc; ++i)
+          cmds.push_back(argv[i]);
+  }
 
   do {
-      if (argc == 1 && !getline(cin, cmd)) // Wait for an input or an end-of-file (EOF) indication
-          cmd = "quit";
-
+      if (argc > 1) {
+          if (cmds.empty())
+              break;
+          cmd = cmds.front();
+          cmds.pop_front();
+      }
       istringstream is(cmd);
 
       token.clear(); // Avoid a stale if getline() returns nothing or a blank line
@@ -299,7 +306,7 @@ void UCI::loop(int argc, char* argv[]) {
       else if (!token.empty() && token[0] != '#')
           sync_cout << "Unknown command: '" << cmd << "'. Type help for more information." << sync_endl;
 
-  } while (token != "quit" && argc == 1); // The command-line arguments are one-shot
+  } while (token != "quit"); // The command-line arguments are one-shot
 }
 
 
