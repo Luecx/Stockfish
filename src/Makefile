@@ -759,6 +759,8 @@ endif
 ### Section 4. Public Targets
 ### ==========================================================================
 
+openbench:
+	$(MAKE) ARCH=x86-64-modern COMP=$(COMP) all
 
 help:
 	@echo ""

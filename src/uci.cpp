@@ -249,10 +249,15 @@ void UCI::loop(int argc, char* argv[]) {
 
   do {
       if (argc > 1) {
-          if (cmds.empty())
+          if (cmds.empty()){
+              argc = 1;
               break;
+          }
           cmd = cmds.front();
           cmds.pop_front();
+      }
+      if (argc <= 1 && !getline(cin, cmd)){
+          cmd = "quit";
       }
       istringstream is(cmd);
 
@@ -306,7 +311,7 @@ void UCI::loop(int argc, char* argv[]) {
       else if (!token.empty() && token[0] != '#')
           sync_cout << "Unknown command: '" << cmd << "'. Type help for more information." << sync_endl;
 
-  } while (token != "quit"); // The command-line arguments are one-shot
+  } while (token != "quit" && token != "exit"); // The command-line arguments are one-shot
 }
 
 
